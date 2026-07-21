@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start:bot": "node dist/index.js",
+    "start": "npm run deploy && npm run start:bot",
     "deploy": "tsx deploy-commands.ts",
     "setup-server": "tsx setup-server.ts",
     "publish-panels": "tsx publish-panels.ts",
