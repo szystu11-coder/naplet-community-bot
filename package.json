@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run check",
     "start": "node src/index.js",
-    "check": "node --check src/index.js && node --check src/commands.js && node --check src/events.js && node --check src/interactions.js && node --check src/admin-points.js && node --check src/levels.js && node --check src/member-count.js && node --check src/say-drafts.js && node --check src/say-files.js && node --check scripts/setup-onboarding.js",
+    "check": "node --check src/index.js && node --check src/commands.js && node --check src/events.js && node --check src/interactions.js && node --check src/admin-points.js && node --check src/levels.js && node --check src/member-count.js && node --check src/backup.js && node --check src/say-drafts.js && node --check src/say-files.js && node --check scripts/setup-onboarding.js",
     "setup:onboarding": "node scripts/setup-onboarding.js",
     "setup:notification-roles": "node scripts/setup-notification-roles.js",
     "setup:verification-flow": "node scripts/enforce-verification-after-onboarding.js",

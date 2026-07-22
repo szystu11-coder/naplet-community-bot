@@ -8,6 +8,7 @@ const { prepareSayFiles, sendSayMessage } = require('./say-files');
 const { embed, COLORS, parseDuration, truncate, formatSayText, sayUploadError } = require('./utils');
 const { sendLog } = require('./events');
 const levels = require('./levels');
+const backup = require('./backup');
 
 const sayAttachmentOptionNames = Array.from(
   { length: 10 },
@@ -105,6 +106,12 @@ const commandData = [
     .setName('membercount').setDescription('Zarządzaj licznikiem członków')
     .addSubcommand(s => s.setName('start').setDescription('Uruchom licznik w ustawionej kategorii'))
     .addSubcommand(s => s.setName('stop').setDescription('Zatrzymaj aktualizację licznika'))
+  ,new SlashCommandBuilder()
+    .setName('backup').setDescription('Twórz i przywracaj backup serwera')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .addSubcommand(s => s.setName('create').setDescription('Utwórz backup ról, kanałów i ustawień'))
+    .addSubcommand(s => s.setName('use').setDescription('Przywróć backup z pliku JSON')
+      .addAttachmentOption(o => o.setName('plik').setDescription('Plik backupu JSON').setRequired(true)))
 ].map(command => command.toJSON());
 
 async function handleCommand(interaction, helpers) {
@@ -139,6 +146,21 @@ async function handleCommand(interaction, helpers) {
     store.save();
     await store.persistToDiscord(interaction.guild, interaction.channel);
     return interaction.reply({ content: channel ? `Licznik uruchomiony: ${channel}` : 'Nie udało się utworzyć kanału licznika. Sprawdź uprawnienia Manage Channels.', ephemeral: true });
+  }
+  if (interaction.commandName === 'backup') {
+    if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: 'Ta komenda wymaga uprawnienia Administrator.', ephemeral: true });
+    if (interaction.options.getSubcommand() === 'create') {
+      return interaction.reply({ content: 'Backup serwera:', files: [backup.backupAttachment(interaction.guild)], ephemeral: true });
+    }
+    await interaction.deferReply({ ephemeral: true });
+    try {
+      const file = await backup.downloadBackup(interaction.options.getAttachment('plik'));
+      const result = await backup.restoreBackup(interaction.guild, file);
+      return interaction.editReply(`Przywracanie zakończone. Sprawdzono **${result.roles} ról** i **${result.channels} kanałów**. Istniejące elementy nie zostały usunięte.`);
+    } catch (error) {
+      console.error('Przywracanie backupu:', error);
+      return interaction.editReply(`Nie udało się przywrócić backupu: ${error.message}`);
+    }
   }
 }
 
