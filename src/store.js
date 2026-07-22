@@ -4,6 +4,19 @@ const path = require('node:path');
 const dataDir = path.join(__dirname, '..', 'data');
 const dataFile = path.join(dataDir, 'database.json');
 const CONFIG_PREFIX = 'NAPLET_CONFIG_STATE:';
+const DEFAULT_GUILD_ID = '1520671328636633118';
+const DEFAULT_CONFIG = {
+  logChannelId: '1529442407119065289',
+  welcomeChannelId: '1529117679275737169',
+  ticketLogChannelId: '1529442407119065289',
+  ticketCategoryId: '1529444630012235936',
+  levelUpChannelId: '1529533646233534584',
+  verifiedRoleId: '1529117671516278976',
+  unverifiedRoleId: '1529434963525505024',
+  ticketStaffRoleIds: ['1529117666013478922', '1529117667158528272'],
+  ticketStaffRoleId: '1529117666013478922',
+  welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.'
+};
 
 const emptyData = () => ({
   guilds: {},
@@ -34,26 +47,19 @@ function save() {
 }
 
 function guildConfig(guildId) {
-  const napletGuild = guildId === '1500922225665249351';
+  const napletGuild = guildId === DEFAULT_GUILD_ID;
   data.guilds[guildId] ??= {
-    logChannelId: null,
-    welcomeChannelId: napletGuild ? '1520485846808006726' : null,
+    logChannelId: null, welcomeChannelId: null,
     welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.',
-    verifiedRoleId: napletGuild ? '1503117584550068295' : null,
-    unverifiedRoleId: napletGuild ? '1500924024270881021' : null,
-    ticketCategoryId: napletGuild ? '1526873414999080981' : null,
-    ticketStaffRoleId: napletGuild ? '1520822068072022116' : null,
-    ticketStaffRoleIds: napletGuild ? ['1520822068072022116'] : [],
-    ticketLogChannelId: napletGuild ? '1519834240794234880' : null,
-    levelUpChannelId: null
+    verifiedRoleId: null, unverifiedRoleId: null, ticketCategoryId: null,
+    ticketStaffRoleId: null, ticketStaffRoleIds: [], ticketLogChannelId: null, levelUpChannelId: null
   };
   if (napletGuild) {
-    cfgFallback(data.guilds[guildId], 'welcomeChannelId', '1520485846808006726');
-    cfgFallback(data.guilds[guildId], 'verifiedRoleId', '1503117584550068295');
-    cfgFallback(data.guilds[guildId], 'unverifiedRoleId', '1500924024270881021');
-    cfgFallback(data.guilds[guildId], 'ticketCategoryId', '1526873414999080981');
-    cfgFallback(data.guilds[guildId], 'ticketStaffRoleId', '1520822068072022116');
-    cfgFallback(data.guilds[guildId], 'ticketLogChannelId', '1519834240794234880');
+    for (const [key, value] of Object.entries(DEFAULT_CONFIG)) {
+      if (key === 'ticketStaffRoleIds' && Array.isArray(data.guilds[guildId][key]) && !data.guilds[guildId][key].length) {
+        data.guilds[guildId][key] = [...value];
+      } else cfgFallback(data.guilds[guildId], key, value);
+    }
   }
   cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
   data.guilds[guildId].ticketStaffRoleIds = [...new Set([
