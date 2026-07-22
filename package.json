@@ -1,29 +1,25 @@
 {
-  "name": "naplet-community-bot",
-  "version": "0.1.0",
+  "name": "sqezz-community-bot",
+  "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "description": "Bot Discord dla SQEZZ Community: tickety, konkursy, logi, powitania i weryfikacja.",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "tsx watch index.ts",
-    "build": "tsc",
-    "start:bot": "node dist/index.js",
-    "start": "npm run deploy && npm run start:bot",
-    "deploy": "tsx deploy-commands.ts",
-    "setup-server": "tsx setup-server.ts",
-    "publish-panels": "tsx publish-panels.ts",
-    "check": "tsc --noEmit"
+    "start": "node src/index.js",
+    "check": "node --check src/index.js && node --check src/commands.js && node --check src/events.js && node --check src/interactions.js && node --check src/admin-points.js && node --check src/say-drafts.js && node --check src/say-files.js && node --check scripts/setup-onboarding.js",
+    "setup:onboarding": "node scripts/setup-onboarding.js",
+    "setup:notification-roles": "node scripts/setup-notification-roles.js",
+    "setup:verification-flow": "node scripts/enforce-verification-after-onboarding.js",
+    "setup:beautify-server": "node scripts/beautify-server.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "discord.js": "^14.22.1",
-    "dotenv": "^17.2.3",
-    "zod": "^4.1.12"
+    "dotenv": "^17.2.3"
   },
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
-  },
-  "engines": {
-    "node": ">=22"
+  "overrides": {
+    "undici": "6.27.0"
   }
 }

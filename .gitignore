@@ -1,4 +1,9 @@
 node_modules/
 dist/
 .env
-*.log
+data/*.json
+data/*.tmp
+data/*.pid
+npm-debug.log*
+bot.log
+bot-error.log
