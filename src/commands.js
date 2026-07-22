@@ -98,6 +98,14 @@ const commandData = [
     .addSubcommand(s => s.setName('reroll').setDescription('Wylosuj ponownie')
       .addIntegerOption(o => o.setName('id').setDescription('ID konkursu').setRequired(true).setMinValue(1)))
   ,new SlashCommandBuilder()
+    .setName('konkurs').setDescription('Zarządzaj konkursami')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
+    .addSubcommand(s => s.setName('stworz').setDescription('Utwórz konkurs')
+      .addIntegerOption(o => o.setName('zwyciezcy').setDescription('Liczba wygranych osób').setRequired(true).setMinValue(1).setMaxValue(20))
+      .addStringOption(o => o.setName('czas').setDescription('Np. 30m, 2h, 3d').setRequired(true))
+      .addStringOption(o => o.setName('nagroda').setDescription('Co jest do wygrania').setRequired(true).setMaxLength(200))
+      .addStringOption(o => o.setName('wymagania').setDescription('Wymagania udziału').setRequired(true).setMaxLength(500)))
+  ,new SlashCommandBuilder()
     .setName('poziom').setDescription('Pokaż poziom i XP użytkownika')
     .addUserOption(o => o.setName('uzytkownik').setDescription('Użytkownik').setRequired(false)),
   new SlashCommandBuilder()
@@ -125,6 +133,7 @@ async function handleCommand(interaction, helpers) {
   if (interaction.commandName === 'przekieruj') return redirectTicketCommand(interaction);
   if (interaction.commandName === 'say') return sayCommand(interaction);
   if (interaction.commandName === 'giveaway') return giveawayCommand(interaction, helpers);
+  if (interaction.commandName === 'konkurs') return giveawayCommand(interaction, helpers);
   if (interaction.commandName === 'poziom') {
     const user = interaction.options.getUser('uzytkownik') || interaction.user;
     const member = await interaction.guild.members.fetch(user.id);
@@ -481,7 +490,7 @@ async function configCommand(interaction) {
 
 async function giveawayCommand(interaction, helpers) {
   const sub = interaction.options.getSubcommand();
-  if (sub === 'start') {
+  if (sub === 'start' || (interaction.commandName === 'konkurs' && sub === 'stworz')) {
     const duration = parseDuration(interaction.options.getString('czas'));
     if (!duration || duration < 10000 || duration > 2592000000) {
       return interaction.reply({ content: 'Podaj czas od 10s do 30d, np. `30m`, `2h` albo `3d`.', ephemeral: true });
