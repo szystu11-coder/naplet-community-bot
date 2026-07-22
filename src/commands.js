@@ -7,6 +7,7 @@ const sayDrafts = require('./say-drafts');
 const { prepareSayFiles, sendSayMessage } = require('./say-files');
 const { embed, COLORS, parseDuration, truncate, formatSayText, sayUploadError } = require('./utils');
 const { sendLog } = require('./events');
+const levels = require('./levels');
 
 const sayAttachmentOptionNames = Array.from(
   { length: 10 },
@@ -88,6 +89,11 @@ const commandData = [
       .addIntegerOption(o => o.setName('id').setDescription('ID konkursu').setRequired(true).setMinValue(1)))
     .addSubcommand(s => s.setName('reroll').setDescription('Wylosuj ponownie')
       .addIntegerOption(o => o.setName('id').setDescription('ID konkursu').setRequired(true).setMinValue(1)))
+  ,new SlashCommandBuilder()
+    .setName('poziom').setDescription('Pokaż poziom i XP użytkownika')
+    .addUserOption(o => o.setName('uzytkownik').setDescription('Użytkownik').setRequired(false)),
+  new SlashCommandBuilder()
+    .setName('ranking').setDescription('Pokaż ranking poziomów serwera')
 ].map(command => command.toJSON());
 
 async function handleCommand(interaction, helpers) {
@@ -101,6 +107,12 @@ async function handleCommand(interaction, helpers) {
   if (interaction.commandName === 'przekieruj') return redirectTicketCommand(interaction);
   if (interaction.commandName === 'say') return sayCommand(interaction);
   if (interaction.commandName === 'giveaway') return giveawayCommand(interaction, helpers);
+  if (interaction.commandName === 'poziom') {
+    const user = interaction.options.getUser('uzytkownik') || interaction.user;
+    const member = await interaction.guild.members.fetch(user.id);
+    return interaction.reply({ embeds: [levels.profileEmbed(member)] });
+  }
+  if (interaction.commandName === 'ranking') return interaction.reply({ embeds: [levels.rankingEmbed(interaction.guild)] });
 }
 
 async function warnCommand(interaction) {

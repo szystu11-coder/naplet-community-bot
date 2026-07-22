@@ -11,6 +11,7 @@ const { commandData, handleCommand } = require('./commands');
 const interactions = require('./interactions');
 const { registerEvents } = require('./events');
 const { registerAdminPoints } = require('./admin-points');
+const levels = require('./levels');
 const { COLORS } = require('./utils');
 
 for (const variable of ['DISCORD_TOKEN', 'CLIENT_ID', 'GUILD_ID']) {
@@ -48,7 +49,9 @@ store.load();
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
   ],
   partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User]
 });
@@ -105,6 +108,7 @@ const helpers = {
 
 registerEvents(client);
 registerAdminPoints(client);
+levels.registerLevels(client);
 
 client.once(Events.ClientReady, async readyClient => {
   console.log(`Zalogowano jako ${readyClient.user.tag}`);
