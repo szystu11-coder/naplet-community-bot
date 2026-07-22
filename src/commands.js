@@ -37,7 +37,7 @@ const commandData = [
     .addSubcommand(s => s.setName('role').setDescription('Ustaw rolę')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Zweryfikowany', value: 'verifiedRoleId' }, { name: 'Niezweryfikowany', value: 'unverifiedRoleId' },
-        { name: 'Obsługa ticketów', value: 'ticketStaffRoleId' }
+        { name: 'Obsługa ticketów (dodaj rolę)', value: 'ticketStaffRoleId' }
       )).addRoleOption(o => o.setName('rola').setDescription('Rola').setRequired(true)))
     .addSubcommand(s => s.setName('category').setDescription('Ustaw kategorię ticketów')
       .addChannelOption(o => o.setName('kategoria').setDescription('Kategoria').addChannelTypes(ChannelType.GuildCategory).setRequired(true)))
@@ -150,7 +150,7 @@ async function warnCommand(interaction) {
   };
   store.data.warnings[id] = warning;
   store.save();
-  await store.persistToDiscord(interaction.guild);
+  await store.persistToDiscord(interaction.guild, interaction.channel);
 
   const activeCount = activeWarnings(interaction.guildId, user.id).length;
   const dmSent = await user.send({ embeds: [
@@ -372,7 +372,10 @@ async function configCommand(interaction) {
     if (['verifiedRoleId', 'unverifiedRoleId'].includes(type) && role.position >= interaction.guild.members.me.roles.highest.position) {
       return interaction.reply({ content: `Rola ${role} musi znajdować się niżej niż najwyższa rola bota.`, ephemeral: true });
     }
-    cfg[type] = role.id;
+    if (type === 'ticketStaffRoleId') {
+      cfg.ticketStaffRoleIds = [...new Set([...(cfg.ticketStaffRoleIds || []), role.id])];
+      cfg.ticketStaffRoleId = cfg.ticketStaffRoleIds[0];
+    } else cfg[type] = role.id;
   }
   if (sub === 'category') cfg.ticketCategoryId = interaction.options.getChannel('kategoria').id;
   if (sub === 'welcome') cfg.welcomeMessage = interaction.options.getString('tekst');
@@ -384,7 +387,7 @@ async function configCommand(interaction) {
       ['Logi ticketów', cfg.ticketLogChannelId && `<#${cfg.ticketLogChannelId}>`], ['Kategoria ticketów', cfg.ticketCategoryId && `<#${cfg.ticketCategoryId}>`],
       ['Awans poziomu', cfg.levelUpChannelId && `<#${cfg.levelUpChannelId}>`],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
-      ['Obsługa ticketów', cfg.ticketStaffRoleId && `<@&${cfg.ticketStaffRoleId}>`]
+      ['Obsługa ticketów', (cfg.ticketStaffRoleIds || (cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])).map(id => `<@&${id}>`).join(', ')]
     ];
     const result = new EmbedBuilder().setColor(COLORS.primary).setTitle('Konfiguracja Naplet Community Bot')
       .addFields(fields.map(([name, value]) => ({ name, value: value || 'Nie ustawiono', inline: true })))

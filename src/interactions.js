@@ -13,7 +13,7 @@ const TICKET_STAFF_ROLE_NAMES = new Set([
 ]);
 
 function ticketStaffRoleIds(guild, cfg) {
-  const ids = new Set(cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : []);
+  const ids = new Set([...(cfg.ticketStaffRoleIds || []), ...(cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])]);
   for (const role of guild.roles.cache.values()) {
     if (!role.managed && TICKET_STAFF_ROLE_NAMES.has(role.name)) ids.add(role.id);
   }
@@ -159,7 +159,8 @@ async function createTicket(interaction) {
     new ButtonBuilder().setCustomId(`ticket:claim:${id}`).setLabel('Przejmij').setEmoji('🙋').setStyle(ButtonStyle.Primary),
     new ButtonBuilder().setCustomId(`ticket:close:${id}`).setLabel('Zamknij').setEmoji('🔒').setStyle(ButtonStyle.Danger)
   );
-  await channel.send({ content: `${interaction.user} <@&${cfg.ticketStaffRoleId}>`, embeds: [embed(`Ticket #${id}`, `**Autor:** ${interaction.user}\n**Powód:** ${reason}`)], components: [row] });
+  const staffMentions = staffRoleIds.map(roleId => `<@&${roleId}>`).join(' ');
+  await channel.send({ content: `${interaction.user} ${staffMentions}`, embeds: [embed(`Ticket #${id}`, `**Autor:** ${interaction.user}\n**Powód:** ${reason}`)], components: [row] });
   await interaction.editReply(`Ticket utworzony: ${channel}`);
 }
 

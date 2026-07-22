@@ -43,6 +43,7 @@ function guildConfig(guildId) {
     unverifiedRoleId: napletGuild ? '1500924024270881021' : null,
     ticketCategoryId: napletGuild ? '1526873414999080981' : null,
     ticketStaffRoleId: napletGuild ? '1520822068072022116' : null,
+    ticketStaffRoleIds: napletGuild ? ['1520822068072022116'] : [],
     ticketLogChannelId: napletGuild ? '1519834240794234880' : null,
     levelUpChannelId: null
   };
@@ -55,6 +56,10 @@ function guildConfig(guildId) {
     cfgFallback(data.guilds[guildId], 'ticketLogChannelId', '1519834240794234880');
   }
   cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
+  data.guilds[guildId].ticketStaffRoleIds = [...new Set([
+    ...(Array.isArray(data.guilds[guildId].ticketStaffRoleIds) ? data.guilds[guildId].ticketStaffRoleIds : []),
+    ...(data.guilds[guildId].ticketStaffRoleId ? [data.guilds[guildId].ticketStaffRoleId] : [])
+  ])];
   return data.guilds[guildId];
 }
 
@@ -90,10 +95,10 @@ async function restoreFromDiscord(guild) {
   return false;
 }
 
-async function persistToDiscord(guild) {
+async function persistToDiscord(guild, preferredChannel) {
   const cfg = guildConfig(guild.id);
   const preferred = [cfg.logChannelId, cfg.levelUpChannelId, cfg.welcomeChannelId].filter(Boolean);
-  const channels = preferred.map(id => guild.channels.cache.get(id)).filter(channel => channel?.isTextBased?.());
+  const channels = [preferredChannel, ...preferred.map(id => guild.channels.cache.get(id))].filter(channel => channel?.isTextBased?.());
   if (!channels.length) {
     const fallback = guild.systemChannel || guild.channels.cache.find(channel => channel.isTextBased?.() && channel.viewable);
     if (fallback) channels.push(fallback);
