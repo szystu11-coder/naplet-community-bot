@@ -18,7 +18,7 @@ Bot Discord zawierający:
 
 1. W Discord Developer Portal otwórz aplikację bota i w zakładce **Bot** włącz:
    - Server Members Intent,
-   - Message Content Intent.
+   - Message Content Intent nie jest wymagany.
 2. Zaproś bota z zakresami `bot` oraz `applications.commands`. Na start najprościej nadać mu uprawnienie Administrator; później można je ograniczyć.
 3. Skopiuj `.env.example` jako `.env` i uzupełnij token, Application ID oraz ID serwera.
 4. W terminalu uruchom:
