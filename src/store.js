@@ -53,7 +53,7 @@ function guildConfig(guildId) {
     welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.',
     verifiedRoleId: null, unverifiedRoleId: null, ticketCategoryId: null,
     ticketStaffRoleId: null, ticketStaffRoleIds: [], ticketLogChannelId: null, levelUpChannelId: null
-    ,memberCountChannelId: null
+    ,memberCountChannelId: null, memberCountName: 'Ilość członków'
   };
   if (napletGuild) {
     for (const [key, value] of Object.entries(DEFAULT_CONFIG)) {
@@ -64,6 +64,7 @@ function guildConfig(guildId) {
   }
   cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
   cfgFallback(data.guilds[guildId], 'memberCountChannelId', null);
+  cfgFallback(data.guilds[guildId], 'memberCountName', 'Ilość członków');
   data.guilds[guildId].ticketStaffRoleIds = [...new Set([
     ...(Array.isArray(data.guilds[guildId].ticketStaffRoleIds) ? data.guilds[guildId].ticketStaffRoleIds : []),
     ...(data.guilds[guildId].ticketStaffRoleId ? [data.guilds[guildId].ticketStaffRoleId] : [])

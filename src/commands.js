@@ -32,9 +32,10 @@ const commandData = [
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Logi serwera', value: 'logChannelId' }, { name: 'Powitania', value: 'welcomeChannelId' },
         { name: 'Logi ticketów', value: 'ticketLogChannelId' },
-        { name: 'Powiadomienia o poziomie', value: 'levelUpChannelId' },
-        { name: 'Licznik członków', value: 'memberCountChannelId' }
-      )).addChannelOption(o => o.setName('kanal').setDescription('Kanał').setRequired(true)))
+        { name: 'Powiadomienia o poziomie', value: 'levelUpChannelId' }
+      )).addChannelOption(o => o.setName('kanal').setDescription('Kanał').addChannelTypes(ChannelType.GuildText).setRequired(true)))
+    .addSubcommand(s => s.setName('membercount').setDescription('Utwórz lub zmień kanał licznika członków')
+      .addStringOption(o => o.setName('nazwa').setDescription('Nazwa przed liczbą, np. Ilość członków').setRequired(false).setMaxLength(80)))
     .addSubcommand(s => s.setName('role').setDescription('Ustaw rolę')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Zweryfikowany', value: 'verifiedRoleId' }, { name: 'Niezweryfikowany', value: 'unverifiedRoleId' },
@@ -360,6 +361,15 @@ async function deleteMessagesCommand(interaction) {
 async function configCommand(interaction) {
   const cfg = store.guildConfig(interaction.guildId);
   const sub = interaction.options.getSubcommand();
+  if (sub === 'membercount') {
+    const name = interaction.options.getString('nazwa') || 'Ilość członków';
+    cfg.memberCountName = name;
+    const { ensureMemberCountChannel } = require('./member-count');
+    await ensureMemberCountChannel(interaction.guild);
+    store.save();
+    await store.persistToDiscord(interaction.guild, interaction.channel);
+    return interaction.reply({ content: `Kanał licznika został ustawiony na **${name}: ${interaction.guild.memberCount}**.`, ephemeral: true });
+  }
   if (sub === 'channel') {
     const type = interaction.options.getString('typ');
     const channel = interaction.options.getChannel('kanal');
@@ -394,7 +404,7 @@ async function configCommand(interaction) {
       ['Logi', cfg.logChannelId && `<#${cfg.logChannelId}>`], ['Powitania', cfg.welcomeChannelId && `<#${cfg.welcomeChannelId}>`],
       ['Logi ticketów', cfg.ticketLogChannelId && `<#${cfg.ticketLogChannelId}>`], ['Kategoria ticketów', cfg.ticketCategoryId && `<#${cfg.ticketCategoryId}>`],
       ['Awans poziomu', cfg.levelUpChannelId && `<#${cfg.levelUpChannelId}>`],
-      ['Licznik członków', cfg.memberCountChannelId && `<#${cfg.memberCountChannelId}>`],
+      ['Licznik członków', cfg.memberCountChannelId ? `<#${cfg.memberCountChannelId}> (${cfg.memberCountName})` : 'Nie utworzono'],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', (cfg.ticketStaffRoleIds || (cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])).map(id => `<@&${id}>`).join(', ')]
     ];
