@@ -31,7 +31,8 @@ const commandData = [
     .addSubcommand(s => s.setName('channel').setDescription('Ustaw kanał')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Logi serwera', value: 'logChannelId' }, { name: 'Powitania', value: 'welcomeChannelId' },
-        { name: 'Logi ticketów', value: 'ticketLogChannelId' }
+        { name: 'Logi ticketów', value: 'ticketLogChannelId' },
+        { name: 'Powiadomienia o poziomie', value: 'levelUpChannelId' }
       )).addChannelOption(o => o.setName('kanal').setDescription('Kanał').addChannelTypes(ChannelType.GuildText).setRequired(true)))
     .addSubcommand(s => s.setName('role').setDescription('Ustaw rolę')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
@@ -380,6 +381,7 @@ async function configCommand(interaction) {
     const fields = [
       ['Logi', cfg.logChannelId && `<#${cfg.logChannelId}>`], ['Powitania', cfg.welcomeChannelId && `<#${cfg.welcomeChannelId}>`],
       ['Logi ticketów', cfg.ticketLogChannelId && `<#${cfg.ticketLogChannelId}>`], ['Kategoria ticketów', cfg.ticketCategoryId && `<#${cfg.ticketCategoryId}>`],
+      ['Awans poziomu', cfg.levelUpChannelId && `<#${cfg.levelUpChannelId}>`],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', cfg.ticketStaffRoleId && `<@&${cfg.ticketStaffRoleId}>`]
     ];

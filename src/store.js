@@ -42,7 +42,8 @@ function guildConfig(guildId) {
     unverifiedRoleId: napletGuild ? '1500924024270881021' : null,
     ticketCategoryId: napletGuild ? '1526873414999080981' : null,
     ticketStaffRoleId: napletGuild ? '1520822068072022116' : null,
-    ticketLogChannelId: napletGuild ? '1519834240794234880' : null
+    ticketLogChannelId: napletGuild ? '1519834240794234880' : null,
+    levelUpChannelId: null
   };
   if (napletGuild) {
     cfgFallback(data.guilds[guildId], 'welcomeChannelId', '1520485846808006726');
@@ -52,6 +53,7 @@ function guildConfig(guildId) {
     cfgFallback(data.guilds[guildId], 'ticketStaffRoleId', '1520822068072022116');
     cfgFallback(data.guilds[guildId], 'ticketLogChannelId', '1519834240794234880');
   }
+  cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
   return data.guilds[guildId];
 }
 

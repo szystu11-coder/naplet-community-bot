@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { EmbedBuilder, Events } = require('discord.js');
+const store = require('./store');
 
 const dataFile = path.join(__dirname, '..', 'data', 'levels.json');
 const state = { guilds: {} };
@@ -35,7 +36,7 @@ function memberRecord(guildId, userId) {
 function levelForXp(xp) { return Math.floor(Math.sqrt(xp / 100)); }
 function xpForLevel(level) { return level * level * 100; }
 
-function addMessage(message) {
+async function addMessage(message) {
   if (!message.guildId || message.author?.bot) return;
   const record = memberRecord(message.guildId, message.author.id);
   const oldLevel = levelForXp(record.xp);
@@ -43,8 +44,12 @@ function addMessage(message) {
   record.messages += 1;
   const newLevel = levelForXp(record.xp);
   scheduleSave();
-  if (newLevel > oldLevel && message.channel?.isTextBased()) {
-    message.channel.send({
+  const configuredChannelId = store.guildConfig(message.guildId).levelUpChannelId;
+  const channel = configuredChannelId
+    ? message.guild.channels.cache.get(configuredChannelId) || await message.guild.channels.fetch(configuredChannelId).catch(() => null)
+    : message.channel;
+  if (newLevel > oldLevel && channel?.isTextBased()) {
+    channel.send({
       content: `${message.author}, gratulacje! Osiągasz **poziom ${newLevel}** w Naplet Community.`,
       allowedMentions: { users: [message.author.id] }
     }).catch(() => {});
@@ -53,7 +58,7 @@ function addMessage(message) {
 
 function registerLevels(client) {
   load();
-  client.on(Events.MessageCreate, addMessage);
+  client.on(Events.MessageCreate, message => addMessage(message).catch(error => console.error('Naliczanie poziomów:', error)));
 }
 
 function profile(guildId, userId) {
