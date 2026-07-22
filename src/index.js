@@ -81,12 +81,13 @@ const helpers = {
     const id = store.nextId('giveaway');
     const prize = interaction.options.getString('nagroda');
     const requirements = interaction.options.getString('wymagania') || 'Brak dodatkowych wymagań';
+    const organizerName = interaction.member?.displayName || interaction.user.globalName || interaction.user.username;
     const winnerCount = interaction.options.getInteger('zwyciezcy') ?? 1;
     const channel = interaction.options.getChannel('kanal') ?? interaction.channel;
     const endAt = Date.now() + duration;
     const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`giveaway:join:${id}`).setLabel('Weź udział').setEmoji('🎉').setStyle(ButtonStyle.Success));
     const message = await channel.send({
-      embeds: [new EmbedBuilder().setColor(COLORS.primary).setTitle(`🎉 KONKURS: ${prize}`).setDescription(`Kliknij przycisk, aby wziąć udział!\n\n**Zwycięzców:** ${winnerCount}\n**Koniec:** <t:${Math.floor(endAt / 1000)}:R>\n**Wymagania:** ${requirements}\n**Organizator:** ${interaction.user}\n**ID:** \`${id}\``).setTimestamp(endAt)],
+      embeds: [new EmbedBuilder().setColor(COLORS.primary).setTitle(`🎉 KONKURS: ${prize}`).setDescription(`Kliknij przycisk, aby wziąć udział!\n\n**Zwycięzców:** ${winnerCount}\n**Koniec:** <t:${Math.floor(endAt / 1000)}:R>\n**Wymagania:** ${requirements}\n**Organizator:** **${organizerName}**\n**ID:** \`${id}\``).setTimestamp(endAt)],
       components: [row]
     });
     store.data.giveaways[id] = { id, guildId: interaction.guildId, channelId: channel.id, messageId: message.id, hostId: interaction.user.id, prize, winnerCount, endAt, entrants: [], ended: false };
