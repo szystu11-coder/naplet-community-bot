@@ -33,18 +33,18 @@ function save() {
 }
 
 function guildConfig(guildId) {
-  const sqezzGuild = guildId === '1500922225665249351';
+  const napletGuild = guildId === '1500922225665249351';
   data.guilds[guildId] ??= {
     logChannelId: null,
-    welcomeChannelId: sqezzGuild ? '1520485846808006726' : null,
+    welcomeChannelId: napletGuild ? '1520485846808006726' : null,
     welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.',
-    verifiedRoleId: sqezzGuild ? '1503117584550068295' : null,
-    unverifiedRoleId: sqezzGuild ? '1500924024270881021' : null,
-    ticketCategoryId: sqezzGuild ? '1526873414999080981' : null,
-    ticketStaffRoleId: sqezzGuild ? '1520822068072022116' : null,
-    ticketLogChannelId: sqezzGuild ? '1519834240794234880' : null
+    verifiedRoleId: napletGuild ? '1503117584550068295' : null,
+    unverifiedRoleId: napletGuild ? '1500924024270881021' : null,
+    ticketCategoryId: napletGuild ? '1526873414999080981' : null,
+    ticketStaffRoleId: napletGuild ? '1520822068072022116' : null,
+    ticketLogChannelId: napletGuild ? '1519834240794234880' : null
   };
-  if (sqezzGuild) {
+  if (napletGuild) {
     cfgFallback(data.guilds[guildId], 'welcomeChannelId', '1520485846808006726');
     cfgFallback(data.guilds[guildId], 'verifiedRoleId', '1503117584550068295');
     cfgFallback(data.guilds[guildId], 'unverifiedRoleId', '1500924024270881021');

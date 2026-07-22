@@ -70,7 +70,7 @@ const commandData = [
     .addIntegerOption(o => o.setName('id').setDescription('ID ostrzeżenia').setRequired(true).setMinValue(1))
     .addStringOption(o => o.setName('powod').setDescription('Powód usunięcia ostrzeżenia').setRequired(false).setMaxLength(500)),
   new SlashCommandBuilder()
-    .setName('przekieruj').setDescription('Przekieruj aktualny ticket do SQEZZ')
+    .setName('przekieruj').setDescription('Przekieruj aktualny ticket do Naplet Community')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   addSayAttachmentOptions(new SlashCommandBuilder()
     .setName('say').setDescription('Wyślij wiadomość jako bot')
@@ -229,10 +229,10 @@ async function redirectTicketCommand(interaction) {
   }
 
   await interaction.deferReply();
-  await interaction.channel.setName('do-sqezz', `Ticket przekierowany przez ${interaction.user.tag}`);
+  await interaction.channel.setName('do-naplet', `Ticket przekierowany przez ${interaction.user.tag}`);
 
   if (ticket) {
-    ticket.redirectedTo = 'sqezz';
+    ticket.redirectedTo = 'naplet';
     ticket.redirectedBy = interaction.user.id;
     ticket.redirectedAt = Date.now();
     store.save();
@@ -241,12 +241,12 @@ async function redirectTicketCommand(interaction) {
   const ticketLabel = ticket ? `#${ticket.id}` : interaction.channel.id;
   await sendLog(
     interaction.guild,
-    '➡️ Ticket przekierowany do SQEZZ',
+    '➡️ Ticket przekierowany do Naplet Community',
     `**Ticket:** ${ticketLabel}\n**Kanał:** ${interaction.channel}\n**Przekierował:** ${interaction.user}`,
     COLORS.info
   );
   return interaction.editReply({
-    embeds: [embed('➡️ Przekierowano do SQEZZ', `${interaction.user} przekierował/a ten ticket do **SQEZZ**. Nazwa kanału została zmieniona na \`do-sqezz\`.`, COLORS.info)]
+    embeds: [embed('➡️ Przekierowano do Naplet Community', `${interaction.user} przekierował/a ten ticket do **Naplet Community**. Nazwa kanału została zmieniona na \`do-naplet\`.`, COLORS.info)]
   });
 }
 
@@ -371,7 +371,7 @@ async function configCommand(interaction) {
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', cfg.ticketStaffRoleId && `<@&${cfg.ticketStaffRoleId}>`]
     ];
-    const result = new EmbedBuilder().setColor(COLORS.primary).setTitle('Konfiguracja SQEZZ Bot')
+    const result = new EmbedBuilder().setColor(COLORS.primary).setTitle('Konfiguracja Naplet Community Bot')
       .addFields(fields.map(([name, value]) => ({ name, value: value || 'Nie ustawiono', inline: true })))
       .addFields({ name: 'Powitanie', value: cfg.welcomeMessage });
     return interaction.reply({ embeds: [result], ephemeral: true });

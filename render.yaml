@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: sqezz-community-bot
+    name: naplet-community-bot
     runtime: node
     plan: free
     buildCommand: npm ci

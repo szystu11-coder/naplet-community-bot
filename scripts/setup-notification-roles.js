@@ -65,7 +65,7 @@ client.once('clientReady', async () => {
           permissions: [],
           mentionable: true,
           hoist: false,
-          reason: 'Role powiadomień SQEZZ Onboarding'
+          reason: 'Role powiadomień Naplet Community Onboarding'
         });
         console.log(`Utworzono rolę: ${role.name}`);
       } else {

@@ -61,7 +61,7 @@ const healthServer = http.createServer((request, response) => {
     return response.end(JSON.stringify({ status: ready ? 'ok' : 'starting', discord: ready ? client.user.tag : null, uptime: Math.floor(process.uptime()) }));
   }
   response.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-  return response.end('SQEZZ Community Bot działa.');
+  return response.end('Naplet Community Bot działa.');
 });
 healthServer.listen(port, '0.0.0.0', () => console.log(`Health check działa na porcie ${port}.`));
 

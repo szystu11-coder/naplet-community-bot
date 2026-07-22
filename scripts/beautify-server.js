@@ -50,7 +50,7 @@ const names = {
   '1522052009690271865': '⭐・punkty-adm',
   '1521101567846256822': '📣・ogłoszenia-adm',
   '1519830768074096695': '💬・admin-chat',
-  '1524549875658915922': '💜・sqezz-client'
+  '1524549875658915922': '💜・naplet-client'
 };
 
 client.once('clientReady', async () => {
@@ -66,7 +66,7 @@ client.once('clientReady', async () => {
       }
       if (channel.name === newName) continue;
       const oldName = channel.name;
-      await channel.setName(newName, 'Ujednolicenie wyglądu SQEZZ Community');
+      await channel.setName(newName, 'Ujednolicenie wyglądu Naplet Community');
       console.log(`${oldName} -> ${newName}`);
       changed++;
     }

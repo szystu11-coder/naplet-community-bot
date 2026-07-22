@@ -6,7 +6,7 @@ const GUILD_ID = '1500922225665249351';
 const POINTS_CHANNEL_ID = '1522052009690271865';
 const ANNOUNCEMENTS_CHANNEL_ID = '1521101567846256822';
 const TIME_ZONE = 'Europe/Warsaw';
-const STATE_PREFIX = 'SQEZZ_ADMIN_POINTS_STATE:';
+const STATE_PREFIX = 'NAPLET_ADMIN_POINTS_STATE:';
 const STATE_FILENAME = 'SPOILER_admin-points-state.json';
 const MESSAGES_PER_POINT = 20;
 
@@ -270,7 +270,7 @@ async function createDailyReport(reportDate) {
         name: 'Zasady naliczania',
         value: `Każde pełne **${MESSAGES_PER_POINT} wiadomości = 1 pkt**. Minimalna dzienna nagroda za posiadanie rangi administracyjnej wynosi **0,5 pkt**.`
       })
-      .setFooter({ text: `Raport za okres zakończony ${reportDate} o 20:00 • SQEZZ Community` })
+      .setFooter({ text: `Raport za okres zakończony ${reportDate} o 20:00 • Naplet Community` })
       .setTimestamp()],
     allowedMentions: { parse: [] }
   });

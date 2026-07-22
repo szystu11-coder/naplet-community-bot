@@ -28,7 +28,7 @@ function isTicketStaff(member, cfg) {
 
 function ticketPanel() {
   return {
-    embeds: [embed('Centrum pomocy SQEZZ', 'Potrzebujesz pomocy? Kliknij przycisk poniżej i krótko opisz sprawę.\n\nNie twórz ticketów bez powodu.')],
+    embeds: [embed('Centrum pomocy Naplet Community', 'Potrzebujesz pomocy? Kliknij przycisk poniżej i krótko opisz sprawę.\n\nNie twórz ticketów bez powodu.')],
     components: [new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('ticket:create').setLabel('Utwórz ticket').setEmoji('🎫').setStyle(ButtonStyle.Primary)
     )]

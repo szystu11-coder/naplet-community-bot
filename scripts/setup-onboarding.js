@@ -41,7 +41,7 @@ const option = (title, description, emojiName, channelIds = [], roleIds = []) =>
 
 const prompts = [
   {
-    id: id(), type: 0, title: 'Co chcesz znaleźć w SQEZZ Community?',
+    id: id(), type: 0, title: 'Co chcesz znaleźć w Naplet Community?',
     single_select: false, required: true, in_onboarding: true,
     options: [
       option('Rozmowy z community', 'Poznaj ludzi i dołącz do głównego czatu.', '💬', [CHANNELS.general], []),
@@ -77,7 +77,7 @@ const prompts = [
       option('Rekrutacja', 'Informacje o naborach i współpracy.', '🥂', [CHANNELS.recruitment], []),
       option('Mody', 'Modyfikacje polecane przez community.', '🧩', [CHANNELS.mods], []),
       option('TXT i paczki', 'Tekstury, paczki i materiały do pobrania.', '🎨', [CHANNELS.txt], []),
-      option('Partnerstwa', 'Poznaj partnerów SQEZZ Community.', '🤝', [CHANNELS.partnerships], [])
+      option('Partnerstwa', 'Poznaj partnerów Naplet Community.', '🤝', [CHANNELS.partnerships], [])
     ]
   }
 ];
@@ -115,11 +115,11 @@ client.once('clientReady', async () => {
     }
     console.log('Ustawiono 8 kanałów startowych, w tym 5 dostępnych do pisania.');
 
-    await rest.put(Routes.guildOnboarding(guildId), { body: draft, reason: 'Nowy onboarding SQEZZ Community' });
+    await rest.put(Routes.guildOnboarding(guildId), { body: draft, reason: 'Nowy onboarding Naplet Community' });
     console.log('Zapisano i zweryfikowano nowy onboarding jako wersję roboczą.');
 
     const result = await rest.put(Routes.guildOnboarding(guildId), {
-      body: { ...draft, enabled: true }, reason: 'Włączenie nowego onboardingu SQEZZ Community'
+      body: { ...draft, enabled: true }, reason: 'Włączenie nowego onboardingu Naplet Community'
     });
     console.log(`ONBOARDING_OK enabled=${result.enabled} prompts=${result.prompts.length} defaults=${result.default_channel_ids.length} mode=${result.mode}`);
     client.destroy();

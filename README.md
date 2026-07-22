@@ -1,4 +1,4 @@
-# SQEZZ Community Bot
+# Naplet Community Bot
 
 Bot Discord zawierający:
 
