@@ -11,6 +11,9 @@ const DEFAULT_CONFIG = {
   ticketLogChannelId: '1529442407119065289',
   ticketCategoryId: '1529444630012235936',
   levelUpChannelId: '1529533646233534584',
+  memberCountCategoryId: '1529117672632225982',
+  configStorageChannelId: '1529541584561897643',
+  memberCountName: '👥︱ członków',
   verifiedRoleId: '1529117671516278976',
   unverifiedRoleId: '1529434963525505024',
   ticketStaffRoleIds: ['1529117666013478922', '1529117667158528272'],
@@ -64,7 +67,7 @@ function guildConfig(guildId) {
   }
   cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
   cfgFallback(data.guilds[guildId], 'memberCountChannelId', null);
-  cfgFallback(data.guilds[guildId], 'memberCountName', 'Ilość członków');
+  cfgFallback(data.guilds[guildId], 'memberCountName', napletGuild ? '👥︱ członków' : 'Ilość członków');
   cfgFallback(data.guilds[guildId], 'memberCountCategoryId', null);
   cfgFallback(data.guilds[guildId], 'memberCountEnabled', false);
   cfgFallback(data.guilds[guildId], 'configStorageChannelId', null);
