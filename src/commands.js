@@ -38,6 +38,8 @@ const commandData = [
       .addStringOption(o => o.setName('nazwa').setDescription('Nazwa przed liczbą, np. Ilość członków').setRequired(false).setMaxLength(80)))
     .addSubcommand(s => s.setName('membercount-category').setDescription('Ustaw kategorię dla licznika członków')
       .addChannelOption(o => o.setName('kategoria').setDescription('Kategoria kanałów').addChannelTypes(ChannelType.GuildCategory).setRequired(true)))
+    .addSubcommand(s => s.setName('storage').setDescription('Ustaw kanał na techniczną kopię konfiguracji')
+      .addChannelOption(o => o.setName('kanal').setDescription('Prywatny kanał na zapis konfiguracji').addChannelTypes(ChannelType.GuildText).setRequired(true)))
     .addSubcommand(s => s.setName('role').setDescription('Ustaw rolę')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Zweryfikowany', value: 'verifiedRoleId' }, { name: 'Niezweryfikowany', value: 'unverifiedRoleId' },
@@ -400,6 +402,12 @@ async function configCommand(interaction) {
     await store.persistToDiscord(interaction.guild, interaction.channel);
     return interaction.reply({ content: `Kategoria licznika ustawiona na ${category}. Użyj teraz /membercount start.`, ephemeral: true });
   }
+  if (sub === 'storage') {
+    cfg.configStorageChannelId = interaction.options.getChannel('kanal').id;
+    store.save();
+    await store.persistToDiscord(interaction.guild, interaction.options.getChannel('kanal'));
+    return interaction.reply({ content: 'Kanał zapisu konfiguracji został ustawiony.', ephemeral: true });
+  }
   if (sub === 'channel') {
     const type = interaction.options.getString('typ');
     const channel = interaction.options.getChannel('kanal');
@@ -437,6 +445,7 @@ async function configCommand(interaction) {
       ['Licznik członków', cfg.memberCountChannelId ? `<#${cfg.memberCountChannelId}> (${cfg.memberCountName})` : 'Nie utworzono'],
       ['Kategoria licznika', cfg.memberCountCategoryId && `<#${cfg.memberCountCategoryId}>`],
       ['Status licznika', cfg.memberCountEnabled ? 'Uruchomiony' : 'Zatrzymany'],
+      ['Zapis konfiguracji', cfg.configStorageChannelId && `<#${cfg.configStorageChannelId}>`],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', (cfg.ticketStaffRoleIds || (cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])).map(id => `<@&${id}>`).join(', ')]
     ];

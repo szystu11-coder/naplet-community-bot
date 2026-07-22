@@ -53,7 +53,7 @@ function guildConfig(guildId) {
     welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.',
     verifiedRoleId: null, unverifiedRoleId: null, ticketCategoryId: null,
     ticketStaffRoleId: null, ticketStaffRoleIds: [], ticketLogChannelId: null, levelUpChannelId: null
-    ,memberCountChannelId: null, memberCountName: 'Ilość członków'
+    ,memberCountChannelId: null, memberCountCategoryId: null, memberCountName: 'Ilość członków', memberCountEnabled: false, configStorageChannelId: null
   };
   if (napletGuild) {
     for (const [key, value] of Object.entries(DEFAULT_CONFIG)) {
@@ -65,6 +65,9 @@ function guildConfig(guildId) {
   cfgFallback(data.guilds[guildId], 'levelUpChannelId', null);
   cfgFallback(data.guilds[guildId], 'memberCountChannelId', null);
   cfgFallback(data.guilds[guildId], 'memberCountName', 'Ilość członków');
+  cfgFallback(data.guilds[guildId], 'memberCountCategoryId', null);
+  cfgFallback(data.guilds[guildId], 'memberCountEnabled', false);
+  cfgFallback(data.guilds[guildId], 'configStorageChannelId', null);
   data.guilds[guildId].ticketStaffRoleIds = [...new Set([
     ...(Array.isArray(data.guilds[guildId].ticketStaffRoleIds) ? data.guilds[guildId].ticketStaffRoleIds : []),
     ...(data.guilds[guildId].ticketStaffRoleId ? [data.guilds[guildId].ticketStaffRoleId] : [])
@@ -114,8 +117,8 @@ async function restoreFromDiscord(guild) {
 
 async function persistToDiscord(guild, preferredChannel) {
   const cfg = guildConfig(guild.id);
-  const preferred = [cfg.logChannelId, cfg.levelUpChannelId, cfg.welcomeChannelId].filter(Boolean);
-  const channels = [preferredChannel, ...preferred.map(id => guild.channels.cache.get(id))].filter(channel => channel?.isTextBased?.());
+  const preferred = [cfg.configStorageChannelId].filter(Boolean);
+  const channels = [...preferred.map(id => guild.channels.cache.get(id)), preferredChannel].filter(channel => channel?.isTextBased?.());
   if (!channels.length) {
     const fallback = guild.systemChannel || guild.channels.cache.find(channel => channel.isTextBased?.() && channel.viewable);
     if (fallback) channels.push(fallback);
