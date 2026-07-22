@@ -284,3 +284,4 @@ function registerAdminPoints(client) {
 }
 
 module.exports = { registerAdminPoints, earnedPoints2, formatPoints };
+

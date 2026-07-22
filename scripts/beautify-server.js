@@ -81,3 +81,4 @@ client.once('clientReady', async () => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+

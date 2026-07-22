@@ -103,18 +103,18 @@ def crown_icon(draw):
 
 
 ICONS = {
-    "sqezz_save": save_icon,
-    "sqezz_user": user_icon,
-    "sqezz_redirect": redirect_icon,
-    "sqezz_ticket": ticket_icon,
-    "sqezz_shield": shield_icon,
-    "sqezz_warn": warn_icon,
-    "sqezz_check": check_icon,
-    "sqezz_close": close_icon,
-    "sqezz_gift": gift_icon,
-    "sqezz_announce": announce_icon,
-    "sqezz_bot": bot_icon,
-    "sqezz_crown": crown_icon,
+    "naplet_save": save_icon,
+    "naplet_user": user_icon,
+    "naplet_redirect": redirect_icon,
+    "naplet_ticket": ticket_icon,
+    "naplet_shield": shield_icon,
+    "naplet_warn": warn_icon,
+    "naplet_check": check_icon,
+    "naplet_close": close_icon,
+    "naplet_gift": gift_icon,
+    "naplet_announce": announce_icon,
+    "naplet_bot": bot_icon,
+    "naplet_crown": crown_icon,
 }
 
 
@@ -148,9 +148,10 @@ def main():
         text_box = draw.textbbox((0, 0), name, font=font)
         text_width = text_box[2] - text_box[0]
         draw.text((x + (cell_width - text_width) / 2, y + 142), name, fill=(219, 234, 254, 255), font=font)
-    preview.save(OUTPUT_DIR / "sqezz-emoji-pack-preview.png", optimize=True)
+    preview.save(OUTPUT_DIR / "naplet-emoji-pack-preview.png", optimize=True)
     print(f"Generated {len(rendered)} smooth emoji files in {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
     main()
+

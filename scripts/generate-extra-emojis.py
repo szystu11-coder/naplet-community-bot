@@ -227,15 +227,15 @@ def users(draw):
 
 
 EXTRA_ICONS = {
-    "sqezz_like": like, "sqezz_flag": flag, "sqezz_bitcoin": bitcoin, "sqezz_diamond": diamond,
-    "sqezz_dislike": dislike, "sqezz_bell": bell, "sqezz_ethereum": ethereum, "sqezz_euro": euro,
-    "sqezz_folder": folder, "sqezz_star": star, "sqezz_sparkle": sparkle, "sqezz_hashtag": hashtag,
-    "sqezz_info": info, "sqezz_calendar": calendar, "sqezz_calculator": calculator, "sqezz_card": card,
-    "sqezz_document": document, "sqezz_lock": lock, "sqezz_unlock": unlock, "sqezz_key": key,
-    "sqezz_party": party, "sqezz_basket": basket, "sqezz_pencil": pencil, "sqezz_coins": coins,
-    "sqezz_litecoin": litecoin, "sqezz_pin": pin, "sqezz_pln": pln, "sqezz_wallet": wallet,
-    "sqezz_bag": bag, "sqezz_rocket": rocket, "sqezz_heart": heart, "sqezz_users": users,
-    "sqezz_paypal": paypal,
+    "naplet_like": like, "naplet_flag": flag, "naplet_bitcoin": bitcoin, "naplet_diamond": diamond,
+    "naplet_dislike": dislike, "naplet_bell": bell, "naplet_ethereum": ethereum, "naplet_euro": euro,
+    "naplet_folder": folder, "naplet_star": star, "naplet_sparkle": sparkle, "naplet_hashtag": hashtag,
+    "naplet_info": info, "naplet_calendar": calendar, "naplet_calculator": calculator, "naplet_card": card,
+    "naplet_document": document, "naplet_lock": lock, "naplet_unlock": unlock, "naplet_key": key,
+    "naplet_party": party, "naplet_basket": basket, "naplet_pencil": pencil, "naplet_coins": coins,
+    "naplet_litecoin": litecoin, "naplet_pin": pin, "naplet_pln": pln, "naplet_wallet": wallet,
+    "naplet_bag": bag, "naplet_rocket": rocket, "naplet_heart": heart, "naplet_users": users,
+    "naplet_paypal": paypal,
 }
 
 
@@ -256,8 +256,9 @@ def main():
         col,row=index%columns,index//columns; x,y=col*cell_w,row*cell_h
         preview.alpha_composite(image,(x+23,y+8)); bounds=draw.textbbox((0,0),name,font=label_font)
         draw.text((x+(cell_w-(bounds[2]-bounds[0]))/2,y+142),name,font=label_font,fill=(219,234,254,255))
-    preview.save(OUTPUT_DIR/"sqezz-extra-emoji-pack-preview.png",optimize=True)
+    preview.save(OUTPUT_DIR/"naplet-extra-emoji-pack-preview.png",optimize=True)
     print(f"Generated {len(rendered)} extra emojis")
 
 
 if __name__ == "__main__": main()
+

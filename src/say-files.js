@@ -64,3 +64,4 @@ async function sendSayMessage(channelId, message, files, onProgress) {
 }
 
 module.exports = { prepareSayFiles, sendSayMessage };
+

@@ -94,3 +94,4 @@ function registerEvents(client) {
 }
 
 module.exports = { registerEvents, sendLog };
+

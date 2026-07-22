@@ -6,14 +6,14 @@ from PIL import Image, ImageChops, ImageEnhance, ImageFilter, ImageOps
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "assets" / "sqezz-community-banner-base.png"
-CLEAN = ROOT / "assets" / "sqezz-community-banner-clean.png"
-OUTPUT = ROOT / "assets" / "sqezz-community-banner.gif"
+SOURCE = ROOT / "assets" / "naplet-community-banner-base.png"
+CLEAN = ROOT / "assets" / "naplet-community-banner-clean.png"
+OUTPUT = ROOT / "assets" / "naplet-community-banner.gif"
 SIZE = (960, 540)
 
 # Crops are ordered exactly as the viewer should read the lettering.
 LETTER_BOXES = [
-    # SQEZZ
+    # naplet
     (266, 323, 357, 402),
     (350, 323, 451, 402),
     (443, 323, 529, 402),
@@ -122,3 +122,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -138,3 +138,4 @@ client.on(Events.InteractionCreate, async interaction => {
 client.on(Events.Error, error => console.error('Discord client error:', error));
 process.on('unhandledRejection', error => console.error('Unhandled rejection:', error));
 client.login(process.env.DISCORD_TOKEN);
+

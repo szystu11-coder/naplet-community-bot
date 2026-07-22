@@ -66,3 +66,4 @@ function nextId(kind) {
 }
 
 module.exports = { load, save, guildConfig, nextId, get data() { return data; } };
+

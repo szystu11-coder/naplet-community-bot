@@ -218,3 +218,4 @@ async function joinGiveaway(interaction) {
 }
 
 module.exports = { handleComponent, sendTicketPanel, sendVerificationPanel };
+
