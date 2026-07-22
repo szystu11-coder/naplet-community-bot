@@ -36,6 +36,8 @@ const commandData = [
       )).addChannelOption(o => o.setName('kanal').setDescription('Kanał').addChannelTypes(ChannelType.GuildText).setRequired(true)))
     .addSubcommand(s => s.setName('membercount').setDescription('Utwórz lub zmień kanał licznika członków')
       .addStringOption(o => o.setName('nazwa').setDescription('Nazwa przed liczbą, np. Ilość członków').setRequired(false).setMaxLength(80)))
+    .addSubcommand(s => s.setName('membercount-category').setDescription('Ustaw kategorię dla licznika członków')
+      .addChannelOption(o => o.setName('kategoria').setDescription('Kategoria kanałów').addChannelTypes(ChannelType.GuildCategory).setRequired(true)))
     .addSubcommand(s => s.setName('role').setDescription('Ustaw rolę')
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Zweryfikowany', value: 'verifiedRoleId' }, { name: 'Niezweryfikowany', value: 'unverifiedRoleId' },
@@ -97,6 +99,10 @@ const commandData = [
     .addUserOption(o => o.setName('uzytkownik').setDescription('Użytkownik').setRequired(false)),
   new SlashCommandBuilder()
     .setName('ranking').setDescription('Pokaż ranking poziomów serwera')
+  ,new SlashCommandBuilder()
+    .setName('membercount').setDescription('Zarządzaj licznikiem członków')
+    .addSubcommand(s => s.setName('start').setDescription('Uruchom licznik w ustawionej kategorii'))
+    .addSubcommand(s => s.setName('stop').setDescription('Zatrzymaj aktualizację licznika'))
 ].map(command => command.toJSON());
 
 async function handleCommand(interaction, helpers) {
@@ -116,6 +122,22 @@ async function handleCommand(interaction, helpers) {
     return interaction.reply({ embeds: [levels.profileEmbed(member)] });
   }
   if (interaction.commandName === 'ranking') return interaction.reply({ embeds: [levels.rankingEmbed(interaction.guild)] });
+  if (interaction.commandName === 'membercount') {
+    const cfg = store.guildConfig(interaction.guildId);
+    if (interaction.options.getSubcommand() === 'stop') {
+      cfg.memberCountEnabled = false;
+      store.save();
+      await store.persistToDiscord(interaction.guild, interaction.channel);
+      return interaction.reply({ content: 'Licznik członków został zatrzymany. Kanał nie został usunięty.', ephemeral: true });
+    }
+    if (!cfg.memberCountCategoryId) return interaction.reply({ content: 'Najpierw ustaw kategorię przez `/config membercount-category`.', ephemeral: true });
+    cfg.memberCountEnabled = true;
+    const { ensureMemberCountChannel } = require('./member-count');
+    const channel = await ensureMemberCountChannel(interaction.guild);
+    store.save();
+    await store.persistToDiscord(interaction.guild, interaction.channel);
+    return interaction.reply({ content: channel ? `Licznik uruchomiony: ${channel}` : 'Nie udało się utworzyć kanału licznika. Sprawdź uprawnienia Manage Channels.', ephemeral: true });
+  }
 }
 
 async function warnCommand(interaction) {
@@ -370,6 +392,14 @@ async function configCommand(interaction) {
     await store.persistToDiscord(interaction.guild, interaction.channel);
     return interaction.reply({ content: `Kanał licznika został ustawiony na **${name}: ${interaction.guild.memberCount}**.`, ephemeral: true });
   }
+  if (sub === 'membercount-category') {
+    const category = interaction.options.getChannel('kategoria');
+    if (category.type !== ChannelType.GuildCategory) return interaction.reply({ content: 'Wybierz kategorię kanałów.', ephemeral: true });
+    cfg.memberCountCategoryId = category.id;
+    store.save();
+    await store.persistToDiscord(interaction.guild, interaction.channel);
+    return interaction.reply({ content: `Kategoria licznika ustawiona na ${category}. Użyj teraz /membercount start.`, ephemeral: true });
+  }
   if (sub === 'channel') {
     const type = interaction.options.getString('typ');
     const channel = interaction.options.getChannel('kanal');
@@ -405,6 +435,8 @@ async function configCommand(interaction) {
       ['Logi ticketów', cfg.ticketLogChannelId && `<#${cfg.ticketLogChannelId}>`], ['Kategoria ticketów', cfg.ticketCategoryId && `<#${cfg.ticketCategoryId}>`],
       ['Awans poziomu', cfg.levelUpChannelId && `<#${cfg.levelUpChannelId}>`],
       ['Licznik członków', cfg.memberCountChannelId ? `<#${cfg.memberCountChannelId}> (${cfg.memberCountName})` : 'Nie utworzono'],
+      ['Kategoria licznika', cfg.memberCountCategoryId && `<#${cfg.memberCountCategoryId}>`],
+      ['Status licznika', cfg.memberCountEnabled ? 'Uruchomiony' : 'Zatrzymany'],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', (cfg.ticketStaffRoleIds || (cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])).map(id => `<@&${id}>`).join(', ')]
     ];
