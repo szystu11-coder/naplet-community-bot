@@ -150,6 +150,7 @@ async function warnCommand(interaction) {
   };
   store.data.warnings[id] = warning;
   store.save();
+  await store.persistToDiscord(interaction.guild);
 
   const activeCount = activeWarnings(interaction.guildId, user.id).length;
   const dmSent = await user.send({ embeds: [

@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const dataDir = path.join(__dirname, '..', 'data');
 const dataFile = path.join(dataDir, 'database.json');
+const CONFIG_PREFIX = 'NAPLET_CONFIG_STATE:';
 
 const emptyData = () => ({
   guilds: {},
@@ -67,5 +68,46 @@ function nextId(kind) {
   return data.counters[kind];
 }
 
-module.exports = { load, save, guildConfig, nextId, get data() { return data; } };
+function configPayload(guildId) {
+  const encoded = Buffer.from(JSON.stringify(data.guilds[guildId] || {}), 'utf8').toString('base64url');
+  return `${CONFIG_PREFIX}${guildId}:${encoded}`;
+}
+
+async function restoreFromDiscord(guild) {
+  const channels = guild.channels.cache.filter(channel => channel.isTextBased?.() && channel.viewable);
+  for (const channel of channels.values()) {
+    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+    const message = messages?.find(item => item.author.id === guild.client.user.id && item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`));
+    if (!message) continue;
+    try {
+      const encoded = message.content.slice(`${CONFIG_PREFIX}${guild.id}:`.length);
+      data.guilds[guild.id] = { ...data.guilds[guild.id], ...JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) };
+      save();
+      console.log(`Przywrócono konfigurację serwera ${guild.id} z Discorda.`);
+    } catch (error) { console.error('Nie udało się przywrócić konfiguracji:', error.message); }
+    return true;
+  }
+  return false;
+}
+
+async function persistToDiscord(guild) {
+  const cfg = guildConfig(guild.id);
+  const preferred = [cfg.logChannelId, cfg.levelUpChannelId, cfg.welcomeChannelId].filter(Boolean);
+  const channels = preferred.map(id => guild.channels.cache.get(id)).filter(channel => channel?.isTextBased?.());
+  if (!channels.length) {
+    const fallback = guild.systemChannel || guild.channels.cache.find(channel => channel.isTextBased?.() && channel.viewable);
+    if (fallback) channels.push(fallback);
+  }
+  const content = configPayload(guild.id);
+  for (const channel of channels) {
+    const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
+    const existing = messages?.find(item => item.author.id === guild.client.user.id && item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`));
+    if (existing) await existing.edit(content).catch(() => {});
+    else await channel.send({ content, allowedMentions: { parse: [] } }).then(message => message.pin().catch(() => {})).catch(() => {});
+    return true;
+  }
+  return false;
+}
+
+module.exports = { load, save, guildConfig, nextId, restoreFromDiscord, persistToDiscord, get data() { return data; } };
 
