@@ -91,11 +91,19 @@ async function restoreFromDiscord(guild) {
   const channels = guild.channels.cache.filter(channel => channel.isTextBased?.() && channel.viewable);
   for (const channel of channels.values()) {
     const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    const message = messages?.find(item => item.author.id === guild.client.user.id && item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`));
+    const message = messages?.find(item => item.author.id === guild.client.user.id && (
+      item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`) || item.attachments.some(file => file.name === `.naplet-config-${guild.id}.json`)
+    ));
     if (!message) continue;
     try {
-      const encoded = message.content.slice(`${CONFIG_PREFIX}${guild.id}:`.length);
-      data.guilds[guild.id] = { ...data.guilds[guild.id], ...JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) };
+      let savedConfig;
+      const attachment = message.attachments.find(file => file.name === `.naplet-config-${guild.id}.json`);
+      if (attachment) savedConfig = JSON.parse(await (await fetch(attachment.url)).text());
+      else {
+        const encoded = message.content.slice(`${CONFIG_PREFIX}${guild.id}:`.length);
+        savedConfig = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
+      }
+      data.guilds[guild.id] = { ...data.guilds[guild.id], ...savedConfig };
       save();
       console.log(`Przywrócono konfigurację serwera ${guild.id} z Discorda.`);
     } catch (error) { console.error('Nie udało się przywrócić konfiguracji:', error.message); }
@@ -112,12 +120,15 @@ async function persistToDiscord(guild, preferredChannel) {
     const fallback = guild.systemChannel || guild.channels.cache.find(channel => channel.isTextBased?.() && channel.viewable);
     if (fallback) channels.push(fallback);
   }
-  const content = configPayload(guild.id);
+  const content = 'Konfiguracja Naplet Community jest zapisana automatycznie.';
+  const attachment = { attachment: Buffer.from(JSON.stringify(cfg, null, 2), 'utf8'), name: `.naplet-config-${guild.id}.json` };
   for (const channel of channels) {
     const messages = await channel.messages.fetch({ limit: 100 }).catch(() => null);
-    const existing = messages?.find(item => item.author.id === guild.client.user.id && item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`));
-    if (existing) await existing.edit(content).catch(() => {});
-    else await channel.send({ content, allowedMentions: { parse: [] } }).then(message => message.pin().catch(() => {})).catch(() => {});
+    const existing = messages?.find(item => item.author.id === guild.client.user.id && (
+      item.content.startsWith(`${CONFIG_PREFIX}${guild.id}:`) || item.attachments.some(file => file.name === `.naplet-config-${guild.id}.json`)
+    ));
+    if (existing) await existing.edit({ content, files: [attachment], allowedMentions: { parse: [] } }).catch(() => {});
+    else await channel.send({ content, files: [attachment], allowedMentions: { parse: [] } }).then(message => message.pin().catch(() => {})).catch(() => {});
     return true;
   }
   return false;
