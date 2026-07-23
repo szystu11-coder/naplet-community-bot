@@ -4,6 +4,8 @@ dist/
 data/*.json
 data/*.tmp
 data/*.pid
+data/*.sqlite
+data/*.sqlite-*
 npm-debug.log*
 bot.log
 bot-error.log

@@ -9,6 +9,7 @@ const { embed, COLORS, parseDuration, truncate, formatSayText, sayUploadError } 
 const { sendLog } = require('./events');
 const levels = require('./levels');
 const backup = require('./backup');
+const { economyCommandData, handleEconomy } = require('./economy/commands');
 
 const sayAttachmentOptionNames = Array.from(
   { length: 10 },
@@ -107,10 +108,12 @@ const commandData = [
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand(s => s.setName('create').setDescription('Utwórz backup ról, kanałów i ustawień'))
     .addSubcommand(s => s.setName('use').setDescription('Przywróć backup z pliku JSON')
-      .addAttachmentOption(o => o.setName('plik').setDescription('Plik backupu JSON').setRequired(true)))
+      .addAttachmentOption(o => o.setName('plik').setDescription('Plik backupu JSON').setRequired(true))),
+  ...economyCommandData.map(command => ({ toJSON: () => command })),
 ].map(command => command.toJSON());
 
 async function handleCommand(interaction, helpers) {
+  if (economyCommandData.some(command => command.name === interaction.commandName)) return handleEconomy(interaction);
   if (interaction.commandName === 'config') return configCommand(interaction);
   if (interaction.commandName === 'ticket-panel') return helpers.sendTicketPanel(interaction);
   if (interaction.commandName === 'verification-panel') return helpers.sendVerificationPanel(interaction);

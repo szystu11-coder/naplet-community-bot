@@ -54,3 +54,26 @@ Projekt zawiera `render.yaml` i endpoint `/health` potrzebny do uruchomienia jak
 5. W UptimeRobot utwórz monitor **HTTP(s)** dla tego adresu.
 
 Darmowy Render używa nietrwałego systemu plików. Po restarcie lub ponownym wdrożeniu lokalne dane konfiguracji, ticketów i konkursów mogą zostać utracone. Do trwałego działania potrzebny jest płatny Persistent Disk albo zewnętrzna baza danych.
+# Ekonomia Naplet Community
+
+Ekonomia używa SQLite przez wbudowany moduł `node:sqlite` i automatycznie tworzy/migruje tabele przy pierwszym uruchomieniu. Wymagany jest Node.js `>=22.5.0`.
+
+## Komendy
+
+`/balance`, `/daily`, `/work`, `/crime`, `/deposit`, `/withdraw`, `/pay`, `/leaderboard`, `/shop`, `/buy`, `/inventory`, `/use` i `/rob`.
+
+Nagrody, cooldowny, limity i sklep są w [src/economy/config.js](src/economy/config.js). Przykładowe przedmioty to `coffee`, `insurance` i `lucky-charm`.
+
+## Baza danych
+
+Domyślna ścieżka to `data/economy.sqlite`. Można ją zmienić przez `ECONOMY_DB_PATH`. Migrację/inicjalizację uruchamia:
+
+```text
+npm run economy:migrate
+```
+
+W środowisku Render ścieżka musi wskazywać na persistent disk albo zewnętrzną usługę przechowującą dane. Darmowy, efemeryczny dysk Rendera nie gwarantuje zachowania SQLite po odtworzeniu usługi. Przed wdrożeniem ustaw `ECONOMY_DB_PATH` na ścieżkę zamontowanego persistent disk i wykonaj `npm run economy:migrate`.
+
+## Sklep
+
+Przedmiot w `src/economy/config.js` ma pola `id`, `name`, `description`, `price`, `effect` i `consumable`. Efekty są parsowane w `useItem`, więc kolejne efekty można dodawać jako osobne moduły bez zmiany komend.
