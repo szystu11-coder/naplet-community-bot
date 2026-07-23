@@ -13,6 +13,7 @@ const { registerEvents } = require('./events');
 const { registerAdminPoints } = require('./admin-points');
 const levels = require('./levels');
 const { registerMemberCount } = require('./member-count');
+const { registerInvites } = require('./invites');
 const { COLORS } = require('./utils');
 
 for (const variable of ['DISCORD_TOKEN', 'CLIENT_ID', 'GUILD_ID']) {
@@ -113,6 +114,7 @@ registerEvents(client);
 registerAdminPoints(client);
 levels.registerLevels(client);
 registerMemberCount(client);
+registerInvites(client);
 
 client.once(Events.ClientReady, async readyClient => {
   console.log(`Zalogowano jako ${readyClient.user.tag}`);

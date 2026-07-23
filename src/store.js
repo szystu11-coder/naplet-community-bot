@@ -26,6 +26,7 @@ const emptyData = () => ({
   tickets: {},
   giveaways: {},
   warnings: {},
+  invites: {},
   adminPoints: null,
   counters: { ticket: 0, giveaway: 0, warning: 0 }
 });
@@ -56,7 +57,7 @@ function guildConfig(guildId) {
     welcomeMessage: 'Witaj {user} na **{server}**! Jesteś naszym {count}. członkiem.',
     verifiedRoleId: null, unverifiedRoleId: null, ticketCategoryId: null,
     ticketStaffRoleId: null, ticketStaffRoleIds: [], ticketLogChannelId: null, levelUpChannelId: null
-    ,memberCountChannelId: null, memberCountCategoryId: null, memberCountName: 'Ilość członków', memberCountEnabled: false, configStorageChannelId: null
+    ,memberCountChannelId: null, memberCountCategoryId: null, memberCountName: 'Ilość członków', memberCountEnabled: false, configStorageChannelId: null, inviteLogChannelId: null
   };
   if (napletGuild) {
     for (const [key, value] of Object.entries(DEFAULT_CONFIG)) {
@@ -71,6 +72,7 @@ function guildConfig(guildId) {
   cfgFallback(data.guilds[guildId], 'memberCountCategoryId', null);
   cfgFallback(data.guilds[guildId], 'memberCountEnabled', false);
   cfgFallback(data.guilds[guildId], 'configStorageChannelId', null);
+  cfgFallback(data.guilds[guildId], 'inviteLogChannelId', null);
   data.guilds[guildId].ticketStaffRoleIds = [...new Set([
     ...(Array.isArray(data.guilds[guildId].ticketStaffRoleIds) ? data.guilds[guildId].ticketStaffRoleIds : []),
     ...(data.guilds[guildId].ticketStaffRoleId ? [data.guilds[guildId].ticketStaffRoleId] : [])

@@ -34,7 +34,8 @@ const commandData = [
       .addStringOption(o => o.setName('typ').setDescription('Przeznaczenie').setRequired(true).addChoices(
         { name: 'Logi serwera', value: 'logChannelId' }, { name: 'Powitania', value: 'welcomeChannelId' },
         { name: 'Logi ticketów', value: 'ticketLogChannelId' },
-        { name: 'Powiadomienia o poziomie', value: 'levelUpChannelId' }
+        { name: 'Powiadomienia o poziomie', value: 'levelUpChannelId' },
+        { name: 'Logi zaproszeń', value: 'inviteLogChannelId' }
       )).addChannelOption(o => o.setName('kanal').setDescription('Kanał').addChannelTypes(ChannelType.GuildText).setRequired(true)))
     .addSubcommand(s => s.setName('membercount').setDescription('Utwórz lub zmień kanał licznika członków')
       .addStringOption(o => o.setName('nazwa').setDescription('Nazwa przed liczbą, np. Ilość członków').setRequired(false).setMaxLength(80)))
@@ -468,6 +469,7 @@ async function configCommand(interaction) {
       ['Kategoria licznika', cfg.memberCountCategoryId && `<#${cfg.memberCountCategoryId}>`],
       ['Status licznika', cfg.memberCountEnabled ? 'Uruchomiony' : 'Zatrzymany'],
       ['Zapis konfiguracji', cfg.configStorageChannelId && `<#${cfg.configStorageChannelId}>`],
+      ['Logi zaproszeń', cfg.inviteLogChannelId && `<#${cfg.inviteLogChannelId}>`],
       ['Rola zweryfikowana', cfg.verifiedRoleId && `<@&${cfg.verifiedRoleId}>`], ['Rola niezweryfikowana', cfg.unverifiedRoleId && `<@&${cfg.unverifiedRoleId}>`],
       ['Obsługa ticketów', (cfg.ticketStaffRoleIds || (cfg.ticketStaffRoleId ? [cfg.ticketStaffRoleId] : [])).map(id => `<@&${id}>`).join(', ')]
     ];
